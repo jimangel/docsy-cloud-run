@@ -20,7 +20,7 @@ steps:
         gcloud run deploy gitdocs --image gcr.io/${PROJECT_ID}/gitdocs-cloudrun:${BUILD_ID} --port 80 --region ${_REGION} --platform managed --allow-unauthenticated
         ;;
       staging)
-        gcloud beta run deploy gitdocs --image gcr.io/${PROJECT_ID}/gitdocs-cloudrun:${BUILD_ID} --port 80 --region ${_REGION} --platform managed --allow-unauthenticated --no-traffic --tag ${_PR_NUMBER}
+        gcloud beta run deploy gitdocs --image gcr.io/${PROJECT_ID}/gitdocs-cloudrun:${BUILD_ID} --port 80 --region ${_REGION} --platform managed --allow-unauthenticated --no-traffic --tag 'pr-${_PR_NUMBER}'
         ;;
       *)
         echo "environment $_ENVIRONMENT not production or staging; ignored."
