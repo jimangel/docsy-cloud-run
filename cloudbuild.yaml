@@ -1,3 +1,21 @@
+substitutions:
+    _ENVIRONMENT: "production"
+    _GH_REPO: "jimangel/docsy-cloud-run"
+    _REGION: "us-central1"
+
+images:
+# https://cloud.google.com/cloud-build/docs/building/build-containers#store-images
+# If you want to store the image as part of your build flow and want to display the image in the build results, use both the Docker push command and the images field in your build config file.
+- gcr.io/${PROJECT_ID}/gitdocs-cloudrun:${BUILD_ID}
+
+options:
+  logging: GCS_ONLY
+
+images:
+# https://cloud.google.com/cloud-build/docs/building/build-containers#store-images
+# If you want to store the image as part of your build flow and want to display the image in the build results, use both the Docker push command and the images field in your build config file.
+- gcr.io/${PROJECT_ID}/gitdocs-cloudrun:${BUILD_ID}
+
 steps:
 - id: 'Build the container'
   name: 'gcr.io/cloud-builders/docker'
@@ -6,7 +24,6 @@ steps:
 - id: 'Push the container'
   name: 'gcr.io/cloud-builders/docker'
   args: [ 'push', 'gcr.io/${PROJECT_ID}/gitdocs-cloudrun:${BUILD_ID}' ]
-
 
 - id: 'deploy to cloud run'
   name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -26,33 +43,20 @@ steps:
         echo "environment $_ENVIRONMENT not production or staging; ignored."
     esac
 
-#- id: 'Deploy to cloud run'
-#  name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-#  entrypoint: gcloud
-#  args: ['run', 'deploy', 'gitdocs', '--image', 'gcr.io/${PROJECT_ID}/gitdocs-cloudrun:${BUILD_ID}', '--port', '80', '--region', '${_REGION}', '--platform', 'managed', '--allow-unauthenticated']
-
-
-#- name: gcr.io/cloud-builders/curl
-#  entrypoint: bash
-#  args: 
-#    - "-c"
-#    - |
-#      if [ "${_ENVIRONMENT}" == "staging" ]; then \
-#      echo "{\"body\": \"Preview this revision: $(cat /workspace/url.txt)\"}" > /workspace/api_payload.txt && \
-#      curl -s -H "Authorization: token $$GITHUB_TOKEN" -X POST -d @/workspace/api_payload.txt "https://api.github.com/repos/${_GH_REPO}/issues/$_PR_NUMBER/comments"; \
-#      fi
-#  secretEnv: ['GITHUB_TOKEN']
-#secrets:
-#- kmsKeyName: projects/docs-cloudbuild-test-123/locations/global/keyRings/git-docs-demo/cryptoKeys/cloud-run-demo
-#  secretEnv:
-#    GITHUB_TOKEN: CiQARl5C4VqNzU6AtO90GXlo5hLOInBcdxbtrDlGLln7PEUP//sSUgC2VXhFK4gd20I3kHpsDGVmz832j7GD0xzlAfrPeW1N2kZwGihRhY3cE3ftEZikWOxWZNyc2/zZW42h7JqQjbiRcs+eE8iTuDqY+MtkcXIVPIM=
-substitutions:
-    _ENVIRONMENT: "production"
-    _GH_REPO: "jimangel/docsy-cloud-run"
-    _REGION: "us-central1"
-images:
-# https://cloud.google.com/cloud-build/docs/building/build-containers#store-images
-# If you want to store the image as part of your build flow and want to display the image in the build results, use both the Docker push command and the images field in your build config file.
-- gcr.io/${PROJECT_ID}/gitdocs-cloudrun:${BUILD_ID}
-options:
-  logging: GCS_ONLY
+# COMMENT OUT THE CURL STEP IF YOU DO NOT PLAN ON UPDATING PRs WITH PREVIEW URLs
+################################################################################
+- name: gcr.io/cloud-builders/curl
+  entrypoint: bash
+  args: 
+    - "-c"
+    - |
+      if [ "${_ENVIRONMENT}" == "staging" ]; then \
+      echo "{\"body\": \"Preview this revision: $(cat /workspace/url.txt)\"}" > /workspace/api_payload.txt && \
+      curl -s -H "Authorization: token $$GITHUB_TOKEN" -X POST -d @/workspace/api_payload.txt "https://api.github.com/repos/${_GH_REPO}/issues/$_PR_NUMBER/comments"; \
+      fi
+  secretEnv: ['GITHUB_TOKEN']
+secrets:
+- kmsKeyName: projects/docs-cloudbuild-test-123/locations/global/keyRings/git-docs-demo/cryptoKeys/cloud-run-demo
+  secretEnv:
+    GITHUB_TOKEN: CiQARl5C4VqNzU6AtO90GXlo5hLOInBcdxbtrDlGLln7PEUP//sSUgC2VXhFK4gd20I3kHpsDGVmz832j7GD0xzlAfrPeW1N2kZwGihRhY3cE3ftEZikWOxWZNyc2/zZW42h7JqQjbiRcs+eE8iTuDqY+MtkcXIVPIM=
+#################################################################################
