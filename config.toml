@@ -1,5 +1,5 @@
 baseURL = "/"
-title = "Goldydocs"
+title = "Goldydocs 123"
 
 enableRobotsTXT = true
 
@@ -53,8 +53,8 @@ id = "UA-00000000-0"
 
 [languages]
 [languages.en]
-title = "Goldydocs"
-description = "A Docsy example site"
+title = "Goldydocs 123"
+description = "A Docsy example site 123"
 languageName ="English"
 # Weight used for sorting.
 weight = 1
@@ -79,7 +79,7 @@ time_format_blog = "02.01.2006"
 # Everything below this are Site Params
 
 [params]
-copyright = "The Docsy Authors"
+copyright = "The Docsy Authors 123"
 privacy_policy = "https://policies.google.com/privacy"
 
 # First one is picked as the Twitter card image if not set on page.
