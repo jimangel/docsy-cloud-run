@@ -8,7 +8,7 @@ This guide covers:
 - Adding a custom domain URL
 - Automating future builds and PRs
 
-This example repo is hosted it: http://cloudrun.gitdocs.dev
+This example repo is hosted it: https://cloudrun.gitdocs.dev
 
 ## Before Starting
 
